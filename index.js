@@ -1,4 +1,5 @@
 const FPS = 30; //frames per second
+const FRICTION = 0.7;
 const SHIP_SIZE = 30; // ship size in pixels
 const SHIP_THRUST = 5; // accelaration of ship in pixels per second 
 const TURN_SPEED = 360; // turn speed in degrees per second
@@ -71,6 +72,9 @@ function update() {
   if(ship.thrusting) {
     ship.thrust.x += SHIP_THRUST * Math.cos(ship.a) / FPS;
     ship.thrust.y -= SHIP_THRUST * Math.sin(ship.a) / FPS;
+  } else {
+    ship.thrust.x -= FRICTION * ship.thrust.x / FPS;
+    ship.thrust.y -= FRICTION * ship.thrust.y / FPS;
   }
 
 	//draw a triangular ship
@@ -98,6 +102,7 @@ function update() {
 	// move the ship
   ship.x += ship.thrust.x
   ship.y += ship.thrust.y
+  
 
 	// center of dot
 	ctx.fillStyle = "red";
