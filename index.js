@@ -1,5 +1,6 @@
 const FPS = 30; //frames per second
 const SHIP_SIZE = 30; // ship size in pixels
+const SHIP_THRUST = 5; // accelaration of ship in pixels per second 
 const TURN_SPEED = 360; // turn speed in degrees per second
 
 /** @type {HTMLCanvasElement} */
@@ -11,7 +12,12 @@ var ship = {
 	y: canv.height / 2,
 	r: SHIP_SIZE / 2,
 	a: 90 / 180 * Math.PI, // convert to radians
-	rot: 0
+	rot: 0,
+  thrusting: false,
+  thrust: {
+    x: 0,
+    y: 0
+  }
 }
 
 // set up event handlers
@@ -28,7 +34,7 @@ function keyDown( /** @type (KeyboardEvent)*/ ev) {
 			break;
 
 		case 38: // up arrow key  ( thrusts ship forward)
-
+      ship.thrusting = true;
 			break;
 
 		case 39: // right arrow key  (rotate ship right)
@@ -38,14 +44,14 @@ function keyDown( /** @type (KeyboardEvent)*/ ev) {
 	}
 }
 
-function keyup() {
+function keyup( /** @type (KeyboardEvent)*/ ev) {
 	switch (ev.keyCode) {
 		case 37: // left arrow key (stop rotating)
 			ship.rot = 0;
 			break;
 
 		case 38: // up arrow key  ( stop thrusting forward)
-
+      ship.thrusting = false;
 			break;
 
 		case 39: // right arrow key  (stop rotating)
@@ -60,6 +66,12 @@ function update() {
 	// draw space
 	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, canv.width, canv.height);
+
+  // thrust the ship
+  if(ship.thrusting) {
+    ship.thrust.x += SHIP_THRUST * Math.cos(ship.a) / FPS;
+    ship.thrust.y -= SHIP_THRUST * Math.sin(ship.a) / FPS;
+  }
 
 	//draw a triangular ship
 	ctx.strokeStyle = "white";
@@ -84,7 +96,8 @@ function update() {
 	ship.a += ship.rot;
 
 	// move the ship
-
+  ship.x += ship.thrust.x
+  ship.y += ship.thrust.y
 
 	// center of dot
 	ctx.fillStyle = "red";
